@@ -1,6 +1,7 @@
 #include "RestDB.hpp"
 #include <mars/utils/misc.h>
 #include <xtypes/ComponentModel.hpp>
+#include <xtypes/ProjectRegistry.hpp>
 
 #include <iostream>
 #include <iomanip>
@@ -12,9 +13,8 @@ using namespace xtypes;
 namespace xrock_io_library
 {
 
-    RestDB::RestDB(const std::string& dbAddress, const std::string& graph) : registry(new xtypes::XTypeRegistry())
+    RestDB::RestDB(const std::string& dbAddress, const std::string& graph) : registry(new xtypes::ProjectRegistry())
     {
-        registry->register_class<ComponentModel>();
         client = std::make_unique<xdbi::Client>(registry,dbAddress, graph);
         client->setDbUser("");
         client->setDbPassword("");
@@ -28,7 +28,7 @@ namespace xrock_io_library
     {
         nl::json props;
         props["domain"] = mars::utils::toupper(domain);
-        const std::vector<XTypePtr> models = client->find(ComponentModel::classname, props, 0);
+        const std::vector<XTypePtr> models = client->find(ComponentModel::classname, props);
         std::vector<std::pair<std::string, std::string>> out;
         std::transform(models.begin(), models.end(), std::back_inserter(out), [&](auto &model) {
             if (!model->has_property("version"))
@@ -45,7 +45,7 @@ namespace xrock_io_library
         nl::json props;
         props["name"] = model;
         props["domain"] = mars::utils::toupper(domain);
-        const std::vector<XTypePtr> models = client->find(ComponentModel::classname, props, 0);
+        const std::vector<XTypePtr> models = client->find(ComponentModel::classname, props);
         std::vector<std::string> out;
         out.reserve(models.size());
         out.reserve(models.size());
@@ -68,7 +68,7 @@ namespace xrock_io_library
             props["version"] = version;
         }
 
-        std::vector<XTypePtr> xtypes = client->find(ComponentModel::classname, props, limit ? 3 : -1);
+        std::vector<XTypePtr> xtypes = client->find(ComponentModel::classname, props);
         if (xtypes.size() == 0)
         {
             std::cerr << "ComponentModel with props: " << props << " not loaded" << std::endl;
@@ -96,19 +96,8 @@ namespace xrock_io_library
         // Before we can completely load the given component model, we have to find any part models!
         std::string serialized_model = model.toJsonString();
 
-        auto load_missing_models = [&](const nl::json &u) -> ComponentModelPtr
-        {
-            ComponentModel dummy;
-            dummy.set_properties(u);
-            const std::string &uri(dummy.uri());
-            std::vector<XTypePtr> full_models = client->find(ComponentModel::classname, nl::json{{"uri", uri}}); //, limit_recursion=True, recursion_depth=3)
-            if (full_models.size())
-                return std::static_pointer_cast<ComponentModel>(full_models[0]);
-            return nullptr;
-        };
-
         // # import from JSON and export to DB
-        std::vector<ComponentModelPtr> models = ComponentModel::import_from_basic_model(serialized_model, load_missing_models);
+        std::vector<ComponentModelPtr> models = ComponentModel::import_from_basic_model(serialized_model, registry);
         std::vector<XTypePtr> db_models{};
         db_models.reserve(models.size());
         std::transform(models.begin(), models.end(), std::back_inserter(db_models), [&](auto &model)

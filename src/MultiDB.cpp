@@ -1,6 +1,7 @@
 #include "MultiDB.hpp"
 #include <mars/utils/misc.h>
 #include <xtypes/ComponentModel.hpp>
+#include <xtypes/ProjectRegistry.hpp>
 
 #include <iostream>
 #include <iomanip>
@@ -12,9 +13,8 @@ using namespace xtypes;
 namespace xrock_io_library
 {
 
-    MultiDB::MultiDB(const nl::json &config) : registry(new xtypes::XTypeRegistry())
+    MultiDB::MultiDB(const nl::json &config) : registry(new xtypes::ProjectRegistry())
     {
-        registry->register_class<ComponentModel>();
         multidb = std::make_unique<xdbi::MultiDbClient>(registry, config);
     }
 
@@ -26,7 +26,7 @@ namespace xrock_io_library
     {
         nl::json props;
         props["domain"] = mars::utils::toupper(domain);
-        const std::vector<XTypePtr> models = multidb->find(ComponentModel::classname, props, 0);
+        const std::vector<XTypePtr> models = multidb->find(ComponentModel::classname, props);
         std::vector<std::pair<std::string, std::string>> out;
         out.reserve(models.size());
         std::transform(models.begin(), models.end(), std::back_inserter(out), [&](auto &model)
@@ -37,8 +37,6 @@ namespace xrock_io_library
 
     std::vector<std::string> MultiDB::requestVersions(const std::string &domain, const std::string &model)
     {
-        // ToDo as soon as modelDeepness is integrated, we can simplify this
-        // request["modelDeepness"] = "versionOnly";
         nl::json props;
         props["name"] = model;
         props["domain"] = mars::utils::toupper(domain);
@@ -64,7 +62,7 @@ namespace xrock_io_library
             props["version"] = version;
         }
 
-        std::vector<XTypePtr> xtypes = multidb->find(ComponentModel::classname, props, limit ? 3 : -1);
+        std::vector<XTypePtr> xtypes = multidb->find(ComponentModel::classname, props);
         if (xtypes.size() == 0)
         {
             std::cerr << "ComponentModel with props: " << props << " not loaded" << std::endl;
@@ -91,19 +89,8 @@ namespace xrock_io_library
 
         std::string serialized_model = model.toJsonString();
 
-        auto load_missing_models = [&](const nl::json &u) -> ComponentModelPtr
-        {
-            ComponentModel dummy;
-            dummy.set_properties(u);
-            const std::string &uri(dummy.uri());
-            std::vector<XTypePtr> full_models = multidb->find(ComponentModel::classname, nl::json{{"uri", uri}}); //, limit_recursion=True, recursion_depth=3)
-            if (full_models.size())
-                return std::static_pointer_cast<ComponentModel>(full_models[0]);
-            return nullptr;
-        };
-
         // # import from JSON and export to DB
-        std::vector<ComponentModelPtr> models = ComponentModel::import_from_basic_model(serialized_model, load_missing_models);
+        std::vector<ComponentModelPtr> models = ComponentModel::import_from_basic_model(serialized_model, registry);
         std::vector<XTypePtr> db_models{};
         std::transform(models.begin(), models.end(), std::back_inserter(db_models), [&](auto &model)
                        {return std::static_pointer_cast<XType>(model); });
