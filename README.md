@@ -1,4 +1,4 @@
-# Software Name
+# xrock_io_library
 
 The xrock_io_library is a plugin for the [xrock_gui](https://github.com/dfki-ric/xrock_gui_model) the facilitates the usage of Xtypes in the xrock_gui and the database access via xdbi.
 
@@ -9,7 +9,7 @@ xrock_io_library has been funded by the DLR and the Federal Ministry for Economi
 
 ## Getting Started
 
-After installation you can simply open XRock-Gui and will find access to your XTypes database in the header bar.
+After installation, you can simply open XRock-Gui and will find access to your XTypes database in the header bar.
 
 ## Requirements
 - CMake >=3.10
@@ -29,7 +29,7 @@ cmake ..
 make install
 ```
 
-As soon as this package is integrated into one of our package_sets, you can of course also use autoproj's amake
+As soon as this package is integrated into one of our package_sets, you can ofcourse also use autoproj's amake
 
 ## Bug Reports
 
