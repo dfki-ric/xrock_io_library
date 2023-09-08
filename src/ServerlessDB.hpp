@@ -6,6 +6,8 @@
 
 #pragma once
 #include <configmaps/ConfigMap.hpp>
+#include <configmaps/ConfigVector.hpp>
+#include <configmaps/ConfigAtom.hpp>
 #include <xdbi/Serverless.hpp>
 #include <xtypes_generator/XTypeRegistry.hpp>
 #include <memory>
@@ -14,7 +16,6 @@
 
 namespace xrock_io_library
 {
-
     class ServerlessDB : public BaseDB
     {
 
@@ -30,7 +31,8 @@ namespace xrock_io_library
                                                    const bool limit = false) override;
         virtual bool storeModel(const configmaps::ConfigMap &map) override;
         virtual bool removeModel(const std::string &uri) override;
-
+        virtual bool buildModule(const std::string &uri, const std::string &moduleName, const std::map<std::string, std::string> &selectedImplementationsUris) override;
+        virtual configmaps::ConfigMap getUnresolvedAbstracts(const std::string &uri) override;
         virtual void setDbGraph(const std::string &_dbGraph) override;
         virtual void setDbPath(const fs::path &_dbPath) override;
 
@@ -39,4 +41,3 @@ namespace xrock_io_library
         xtypes::XTypeRegistryPtr registry;
     };
 } // end of namespace xrock_io_library
-
