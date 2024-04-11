@@ -25,9 +25,5 @@ namespace xrock_io_library
         // This function returns an initially empty component model to start from scratch
         virtual configmaps::ConfigMap getEmptyComponentModel();
 
-
- 
-
-
     };
 } // end of namespace xrock_io_library

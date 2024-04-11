@@ -2,14 +2,31 @@
   <description brief="DB interface implementation for XRock models into
                       bagel_gui">
   </description>
-  <author>MODKOM Team</author>
-  <author>modkom@dfki.de</author>
-  <maintainer>Henning Wiedemann/henning.wiedemann@dfki.de</maintainer>
-  <license>BSD 3-Clause</license>
+    <!-- Authors -->
+    <author email="henning.wiedemann@dfki.de">Henning Wiedemann</author>
+    <author email="moritz.schilling@dfki.de">Moritz Schilling</author>
+    <author email="priyanka.chowdhury@dfki.de">Priyanka Chowdhury</author>
+    <author email="malte.langosz@dfki.de">Malte Langosz </author>
+    <!-- Maintainers -->
+    <maintainer email="henning.wiedemann@dfki.de">Henning Wiedemann</maintainer>
+    <maintainer email="moritz.schilling@dfki.de">Moritz Schilling</maintainer>
+    <maintainer email="priyanka.chowdhury@dfki.de">Priyanka Chowdhury</maintainer>
+    <maintainer email="malte.langosz@dfki.de">Malte Langosz </maintainer>
+    <!-- Legal Info -->
+    <copyright>DFKI</copyright>
+    <license>BSD 3-Clause</license>
+    <!-- Dependencies -->
   <depend package="database/xdbi" />
   <depend package="representation/xtypes" />
   <depend package="simulation/lib_manager" />
   <depend package="simulation/mars/common/utils" />
   <depend package="bagel/xrock_gui_model" />
   <depend package="python-markdown" />
+  <!-- Additional Metadata -->
+  <stage>1</stage>
+  <activity>active</activity>
+    <keywords>
+        <keyword>utilities</keyword>
+        <keyword>interface</keyword>
+    </keywords>
 </package>
