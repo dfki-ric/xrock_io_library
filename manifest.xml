@@ -19,7 +19,7 @@
   <depend package="database/xdbi" />
   <depend package="representation/xtypes" />
   <depend package="simulation/lib_manager" />
-  <depend package="simulation/mars/common/utils" />
+  <depend package="simulation/utils" />
   <depend package="bagel/xrock_gui_model" />
   <depend package="python-markdown" />
   <!-- Additional Metadata -->
