@@ -7,9 +7,10 @@ lib_defaults()
 define_module_info()
 
 if(APPLE)
-add_definitions(-std=c++17)
 add_definitions(-DGL_SILENCE_DEPRECATION)
 endif(APPLE)
+# 20240918 MS: Somehow on Ubuntu 22.04 this is needed
+add_definitions(-std=c++17)
 add_definitions(-DXROCK_DEFAULT_RESOURCES_PATH=\"${CMAKE_INSTALL_PREFIX}/share\")
 
 set(FILE_DB 1)
@@ -40,10 +41,9 @@ set(HEADERS
 )
 
 add_library(${PROJECT_NAME} SHARED ${SOURCES})
+#set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
+#target_compile_options(${PROJECT_NAME} PRIVATE -Wno-inconsistent-missing-override)
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
-
-target_compile_options(${PROJECT_NAME} PRIVATE -Wno-inconsistent-missing-override)
-set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 
 target_link_libraries(${PROJECT_NAME}
         PkgConfig::lib_manager
@@ -57,6 +57,7 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 add_executable(test_restdb test/test_restdb.cpp)
+target_compile_features(test_restdb PUBLIC cxx_std_17)
 target_link_libraries(test_restdb ${PROJECT_NAME}
           PkgConfig::configmaps
 )
