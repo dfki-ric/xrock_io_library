@@ -2,10 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(xrock_io_library VERSION 1.0.0 DESCRIPTION "io library for xrock_gui")
 find_package(PkgConfig REQUIRED)
 find_package(lib_manager)
-
-lib_defaults()
 define_module_info()
-
 if(APPLE)
 add_definitions(-std=c++17)
 add_definitions(-DGL_SILENCE_DEPRECATION)
